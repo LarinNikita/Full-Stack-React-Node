@@ -5,3 +5,6 @@
 5) утсновка библиотеки для nodeJS nodemon для автоматического перезапуска сервера при изменении файлов в проекте: npm install nodemon
 5.1) Запуск осуществляется с помощью команды: npm run start:dev
 6) npm install jsonwebtoken - работа с web json
+7) npm install mongoose (Mongoose представляет специальную ODM-библиотеку (Object Data Modelling) для работы с MongoDB, которая позволяет сопоставлять объекты классов и документы коллекций из базы данных.)
+8) Установка библиотеки для валидации: npm install express-validator
+9) npm install bcrypt - установка библиотеки шифрования
