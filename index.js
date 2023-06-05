@@ -1,12 +1,11 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
-import { validationResult } from 'express-validator';
 
 import { registerValidation } from './validations/auth.js';
 
-import UserModel from './models/User.js';
+import checkAuth from './utils/checkAuth.js';
+
+import * as UserControler from './controllers/UserControler.js';
 
 mongoose
     .connect('mongodb+srv://admin:Vano88@cluster0.uyav26b.mongodb.net/blog?retryWrites=true&w=majority')
@@ -17,27 +16,14 @@ const app = express();
 
 app.use(express.json());
 
-app.post('/auth/register', registerValidation, async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json(errors.array());
-    }
+//===== Авторизация =====
+app.post('/auth/login', UserControler.login);
 
-    const password = req.body.password;
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+// ===== Регистрация =====
+app.post('/auth/register', registerValidation, UserControler.register);
 
-    const doc = new UserModel({
-        email: req.body.email,
-        fullName: req.body.fullName,
-        avatarUrl: req.body.avatarUrl,
-        passwordHash,
-    });
-
-    const user = await doc.save();
-
-    res.json(user);
-});
+// ===== Доступ к информации =====
+app.get('/auth/me', checkAuth, UserControler.getMe);
 
 app.listen(4444, (err) => {
     if (err) {
