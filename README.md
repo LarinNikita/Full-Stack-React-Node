@@ -8,3 +8,4 @@
 7) npm install mongoose (Mongoose представляет специальную ODM-библиотеку (Object Data Modelling) для работы с MongoDB, которая позволяет сопоставлять объекты классов и документы коллекций из базы данных.)
 8) Установка библиотеки для валидации: npm install express-validator
 9) npm install bcrypt - установка библиотеки шифрования
+10) npm install multer - установка библиотеки для загрузки изображений

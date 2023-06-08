@@ -1,11 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import multer from 'multer';
 
-import { registerValidation } from './validations/auth.js';
-
-import checkAuth from './utils/checkAuth.js';
-
-import * as UserControler from './controllers/UserControler.js';
+import { loginValidation, registerValidation, postCreateValidation } from './validations/index.js';
+import { UserControler, PostControler } from './controllers/index.js';
+import { checkAuth, handlValidationErrors } from './utils/index.js';
 
 mongoose
     .connect('mongodb+srv://admin:Vano88@cluster0.uyav26b.mongodb.net/blog?retryWrites=true&w=majority')
@@ -14,16 +13,59 @@ mongoose
 
 const app = express();
 
-app.use(express.json());
+//Создаем хранилище, в котором будут картинки
+const storage = multer.diskStorage({
+    //путь файла
+    destination: (_, __, callback) => {
+        callback(null, 'uploads');
+    },
+    //название файла
+    filename: (_, file, callback) => {
+        callback(null, file.originalname);
+    },
+});
 
+const upload = multer({ storage });
+
+app.use(express.json());
+app.use('/uploads', express.static('uploads')); //GET запрос на получение статичного файла
+
+//#region роуты достурные всем
 //===== Авторизация =====
-app.post('/auth/login', UserControler.login);
+app.post('/auth/login', loginValidation, handlValidationErrors, UserControler.login);
 
 // ===== Регистрация =====
-app.post('/auth/register', registerValidation, UserControler.register);
+app.post('/auth/register', registerValidation, handlValidationErrors, UserControler.register);
 
 // ===== Доступ к информации =====
 app.get('/auth/me', checkAuth, UserControler.getMe);
+
+// ===== Все статьи =====
+app.get('/posts', PostControler.getAll);
+
+// ===== Одна статья =====
+app.get('/posts/:id', PostControler.getOne);
+
+//#endregion
+
+//#region роуты доступные только авторизованным
+// ===== Создание статьи =====
+app.post('/posts', checkAuth, postCreateValidation, handlValidationErrors, PostControler.create);
+
+// ===== Удалить статью =====
+app.delete('/posts/:id', checkAuth, PostControler.remove);
+
+// ===== Редактировать статью =====
+app.patch('/posts/:id', checkAuth, postCreateValidation, handlValidationErrors, PostControler.update);
+
+// ===== Загрузка изображений =====
+app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+    res.json({
+        url: `/uploads/${req.file.originalname}`,
+    });
+});
+
+//#endregion
 
 app.listen(4444, (err) => {
     if (err) {
