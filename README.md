@@ -9,3 +9,4 @@
 8) Установка библиотеки для валидации: npm install express-validator
 9) npm install bcrypt - установка библиотеки шифрования
 10) npm install multer - установка библиотеки для загрузки изображений
+11) npm install cors - установка библиотеки, которая похволяет делать запросы с других localhost

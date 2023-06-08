@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+import cors from 'cors';
 
 import { loginValidation, registerValidation, postCreateValidation } from './validations/index.js';
 import { UserControler, PostControler } from './controllers/index.js';
@@ -29,6 +30,7 @@ const upload = multer({ storage });
 
 app.use(express.json());
 app.use('/uploads', express.static('uploads')); //GET запрос на получение статичного файла
+app.use(cors());
 
 //#region роуты достурные всем
 //===== Авторизация =====
