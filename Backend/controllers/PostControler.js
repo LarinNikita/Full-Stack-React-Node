@@ -54,7 +54,7 @@ export const getOne = async (req, res) => {
             {
                 returnDocument: 'after',
             }
-        );
+        ).populate('author', '-passwordHash');
 
         if (!doc) {
             return res.status(404).json({

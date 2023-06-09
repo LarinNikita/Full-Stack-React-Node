@@ -27,6 +27,7 @@ export const Home = () => {
       <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
         <Tab label="Новые" />
         <Tab label="Популярные" />
+        <Tab label="Мои" />
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
@@ -37,7 +38,7 @@ export const Home = () => {
               <Post
                 id={object._id}
                 title={object.title}
-                imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+                imageUrl={object.imageUrl}
                 user={object.author}
                 createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
                 viewsCount={object.viewsCount}
