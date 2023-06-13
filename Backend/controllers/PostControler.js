@@ -27,7 +27,11 @@ export const create = async (req, res) => {
 export const getAll = async (req, res) => {
     try {
 
-        const posts = await PostModel.find().populate('author', '-passwordHash').exec();
+        // const posts = await PostModel.find().populate('author', '-passwordHash').exec();
+        const posts = await PostModel
+            .find()
+            .populate({ path: "author", select: ["fullName", "avatarUrl"] })
+            .exec();
 
         res.json(posts)
 
@@ -54,7 +58,8 @@ export const getOne = async (req, res) => {
             {
                 returnDocument: 'after',
             }
-        ).populate('author', '-passwordHash');
+            // ).populate('author', '-passwordHash');
+        ).populate({ path: "author", select: ["fullName", "avatarUrl"] });
 
         if (!doc) {
             return res.status(404).json({
