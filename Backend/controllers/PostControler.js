@@ -54,7 +54,7 @@ export const getOne = async (req, res) => {
             {
                 returnDocument: 'after',
             }
-        );
+        ).populate('author', '-passwordHash');
 
         if (!doc) {
             return res.status(404).json({
@@ -127,6 +127,23 @@ export const update = async (req, res) => {
         console.log(err);
         res.status(500).json({
             message: 'Не удалось обновить статью',
+        });
+    }
+}
+
+export const getLastTags = async (req, res) => {
+    try {
+
+        const posts = await PostModel.find().limit(5).exec();
+
+        const tags = posts.map((obj) => obj.tags).flat().slice(0, 5);
+
+        res.json(tags);
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Не удалось получить тэги',
         });
     }
 }

@@ -67,6 +67,10 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     });
 });
 
+// ===== Получение тэгов =====
+app.get('/posts/tags', PostControler.getLastTags);
+app.get('/tags', PostControler.getLastTags);
+
 //#endregion
 
 app.listen(4444, (err) => {
