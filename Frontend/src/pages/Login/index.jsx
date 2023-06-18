@@ -55,8 +55,13 @@ export const Login = () => {
           label="E-Mail"
           error={Boolean(errors.email?.message)}
           helperText={errors.email?.message}
-          {...register('email', { required: 'Укажите почту' })}
-          type="email"
+          {...register("email", {
+            required: "Укажите почту",
+            pattern: {
+              value: /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/,
+              message: "Некорректный email"
+            }
+          })}
           fullWidth
         />
         <TextField
@@ -64,11 +69,19 @@ export const Login = () => {
           label="Пароль"
           error={Boolean(errors.password?.message)}
           helperText={errors.password?.message}
-          {...register('password', { required: 'Укажите пароль' })}
+          {...register("password", {
+            required: "Укажите пароль",
+            minLength: {
+              value: 6,
+              message: "Минимальная длина пароля - 6 символов"
+            }
+          })}
+          type="password"
           fullWidth
         />
         <Button
           type="submit"
+          disabled={!isValid}
           size="large"
           variant="contained"
           fullWidth
