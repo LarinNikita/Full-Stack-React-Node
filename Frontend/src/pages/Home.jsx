@@ -12,6 +12,7 @@ import { fetchPosts, fetchTags } from '../redux/slices/posts';
 export const Home = () => {
 
   const dispath = useDispatch();
+  const userData = useSelector((state) => state.auth.data);
   const { posts, tags } = useSelector((state) => state.posts);
 
   const isPostsLoading = posts.status === 'loading';
@@ -38,13 +39,13 @@ export const Home = () => {
               <Post
                 id={object._id}
                 title={object.title}
-                imageUrl={object.imageUrl}
+                imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}
                 user={object.author}
                 createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
                 viewsCount={object.viewsCount}
                 commentsCount={3}
                 tags={object.tags}
-                isEditable
+                isEditable={userData?._id === object.author._id}
               />
             ),
           )}
