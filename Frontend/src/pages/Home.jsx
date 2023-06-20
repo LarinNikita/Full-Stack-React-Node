@@ -1,78 +1,151 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
+import FiberNewIcon from '@mui/icons-material/FiberNew';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import PersonIcon from '@mui/icons-material/Person';
+
 import Grid from '@mui/material/Grid';
 
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchPosts, fetchTags } from '../redux/slices/posts';
+import { fetchPosts, fetchPopularPosts, fetchTags } from '../redux/slices/posts';
 
 export const Home = () => {
 
   const dispath = useDispatch();
   const userData = useSelector((state) => state.auth.data);
-  const { posts, tags } = useSelector((state) => state.posts);
+
+  const { posts, tags, popularPosts } = useSelector((state) => state.posts);
 
   const isPostsLoading = posts.status === 'loading';
+  const isPopularPostsLoading = popularPosts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
 
   React.useEffect(() => {
     dispath(fetchPosts());
     dispath(fetchTags());
+    dispath(fetchPopularPosts());
   }, []);
 
+  const [value, setValue] = React.useState(localStorage.getItem('tabValue') || '1');
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    localStorage.setItem('tabValue', newValue);
+  }
+
   return (
-    <>
-      <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
-        <Tab label="Новые" />
-        <Tab label="Популярные" />
-        <Tab label="Мои" />
-      </Tabs>
-      <Grid container spacing={4}>
-        <Grid xs={8} item>
-          {(isPostsLoading ? [...Array(5)] : posts.items).map((object, index) =>
-            isPostsLoading ? (
-              <Post key={index} isLoading={true} />
-            ) : (
-              <Post
-                id={object._id}
-                title={object.title}
-                imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}
-                user={object.author}
-                createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
-                viewsCount={object.viewsCount}
-                commentsCount={3}
-                tags={object.tags}
-                isEditable={userData?._id === object.author._id}
-              />
-            ),
-          )}
-        </Grid>
-        <Grid xs={4} item>
-          <TagsBlock items={tags.items} isLoading={isTagsLoading} />
-          <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
+    <TabContext value={value}>
+      <TabList
+        style={{ marginBottom: 15 }}
+        onChange={handleChange}
+        aria-label="lab API tabs example"
+      >
+        <Tab icon={<FiberNewIcon sx={{ fontSize: 30 }} />} iconPosition="start" value="1" label="Новые" />
+        <Tab icon={<LocalFireDepartmentIcon sx={{ fontSize: 30 }} />} iconPosition="start" value="2" label="Популярные" />
+        <Tab icon={<PersonIcon sx={{ fontSize: 30 }} />} iconPosition="start" value="3" label="Мои" />
+      </TabList>
+      <TabPanel value="1">
+        <Grid container spacing={4}>
+          <Grid xs={8} item>
+            {(isPostsLoading ? [...Array(5)] : posts.items).map((object, index) =>
+              isPostsLoading ? (
+                <Post key={index} isLoading={true} />
+              ) : (
+                <Post
+                  id={object._id}
+                  title={object.title}
+                  imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}
+                  user={object.author}
+                  createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
+                  viewsCount={object.viewsCount}
+                  commentsCount={3}
+                  tags={object.tags}
+                  isEditable={userData?._id === object.author._id}
+                />
+              ),
+            )}
+          </Grid>
+          <Grid xs={4} item>
+            <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+            <CommentsBlock
+              items={[
+                {
+                  user: {
+                    fullName: 'Вася Пупкин',
+                    avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
+                  },
+                  text: 'Это тестовый комментарий',
                 },
-                text: 'Это тестовый комментарий',
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
+                {
+                  user: {
+                    fullName: 'Иван Иванов',
+                    avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
+                  },
+                  text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
                 },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-              },
-            ]}
-            isLoading={false}
-          />
+              ]}
+              isLoading={false}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-    </>
+      </TabPanel>
+      <TabPanel value="2">
+        <Grid container spacing={4}>
+          <Grid xs={8} item>
+            {(isPopularPostsLoading ? [...Array(5)] : popularPosts.items).map((object, index) =>
+              isPopularPostsLoading ? (
+                <Post key={index} isLoading={true} />
+              ) : (
+                <Post
+                  id={object._id}
+                  title={object.title}
+                  imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}
+                  user={object.author}
+                  createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
+                  viewsCount={object.viewsCount}
+                  commentsCount={3}
+                  tags={object.tags}
+                  isEditable={userData?._id === object.author._id}
+                />
+              ),
+            )}
+          </Grid>
+          <Grid xs={4} item>
+            <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+            <CommentsBlock
+              items={[
+                {
+                  user: {
+                    fullName: 'Вася Пупкин',
+                    avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
+                  },
+                  text: 'Это тестовый комментарий',
+                },
+                {
+                  user: {
+                    fullName: 'Иван Иванов',
+                    avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
+                  },
+                  text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
+                },
+              ]}
+              isLoading={false}
+            />
+          </Grid>
+        </Grid>
+      </TabPanel>
+      <TabPanel value="3">
+        Мои посты
+      </TabPanel>
+    </TabContext>
   );
 };

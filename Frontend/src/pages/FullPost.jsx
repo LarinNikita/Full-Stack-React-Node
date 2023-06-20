@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 
@@ -13,6 +14,8 @@ export const FullPost = () => {
   const [data, setData] = React.useState();
   const [isLoading, setLoading] = React.useState(true);
   const { id } = useParams();
+
+  const userData = useSelector((state) => state.auth.data);
 
   React.useEffect(() => {
 
@@ -46,6 +49,7 @@ export const FullPost = () => {
         commentsCount={3}
         tags={data.tags}
         isFullPost
+        isEditable={userData?._id === data.author._id}
       >
         {/* <p>{data.text}</p> */}
         <ReactMarkdown children={data.text} />

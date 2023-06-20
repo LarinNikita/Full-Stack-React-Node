@@ -30,6 +30,7 @@ export const getAll = async (req, res) => {
         // const posts = await PostModel.find().populate('author', '-passwordHash').exec();
         const posts = await PostModel
             .find()
+            .sort({ createdAt: -1 })
             .populate({ path: "author", select: ["fullName", "avatarUrl"] })
             .exec();
 
@@ -39,6 +40,27 @@ export const getAll = async (req, res) => {
         console.log(err);
         res.status(500).json({
             message: 'Не удалось получить статьи',
+        });
+    }
+};
+
+export const getPopular = async (req, res) => {
+    try {
+
+        const posts = await PostModel
+            .find({ viewsCount: { $gte: 10 } }) //$gte выбирает документы, 
+            //в которых значение field больше или равно (т.е. >=) указанному значению (например value, .)
+            // .find()
+            .sort({ viewsCount: -1 }) // сортируем по убыванию viewsCount
+            .populate({ path: "author", select: ["fullName", "avatarUrl"] })
+            .exec();
+
+        res.json(posts)
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Не удалось получить популярные статьи',
         });
     }
 };

@@ -18,10 +18,18 @@ $blue: #4361ee;
   }
 
   &Full {
+    .image {
+      object-fit: contain;
+      max-height: 800px;
+      object-position: 50% 50%;
+    }
     &:hover {
       background-color: #fff;
       border: 1px solid #dedede;
       box-shadow: none;
+    }
+    .editButtons {
+      opacity: 1;
     }
   }
 }
