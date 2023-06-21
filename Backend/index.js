@@ -52,6 +52,10 @@ app.get('/posts', PostControler.getAll);
 // ===== Популярные статьи =====
 app.get('/posts/popular', PostControler.getPopular);
 
+// ===== Получение тэгов =====
+app.get('/posts/tags', PostControler.getLastTags);
+app.get('/tags', PostControler.getLastTags);
+
 // ===== Одна статья =====
 app.get('/posts/:id', PostControler.getOne);
 
@@ -73,10 +77,6 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
         url: `/uploads/${req.file.originalname}`,
     });
 });
-
-// ===== Получение тэгов =====
-app.get('/posts/tags', PostControler.getLastTags);
-app.get('/tags', PostControler.getLastTags);
 
 //#endregion
 
