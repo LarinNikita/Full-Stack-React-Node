@@ -19,7 +19,11 @@ import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { fetchPosts, fetchPopularPosts, fetchTags } from '../redux/slices/posts';
 
+import { selectIsAuth } from '../redux/slices/auth';
+
 export const Home = () => {
+
+  const isAuth = useSelector(selectIsAuth);
 
   const dispath = useDispatch();
   const userData = useSelector((state) => state.auth.data);
@@ -49,9 +53,25 @@ export const Home = () => {
         onChange={handleChange}
         aria-label="lab API tabs example"
       >
-        <Tab icon={<FiberNewIcon sx={{ fontSize: 30 }} />} iconPosition="start" value="1" label="Новые" />
-        <Tab icon={<LocalFireDepartmentIcon sx={{ fontSize: 30 }} />} iconPosition="start" value="2" label="Популярные" />
-        <Tab icon={<PersonIcon sx={{ fontSize: 30 }} />} iconPosition="start" value="3" label="Мои" />
+        <Tab
+          icon={<FiberNewIcon sx={{ fontSize: 30 }} />}
+          iconPosition="start"
+          value="1"
+          label="Новые"
+        />
+        <Tab
+          icon={<LocalFireDepartmentIcon sx={{ fontSize: 30 }} />}
+          iconPosition="start"
+          value="2"
+          label="Популярные"
+        />
+        <Tab
+          icon={<PersonIcon sx={{ fontSize: 30 }} />}
+          iconPosition="start"
+          value="3"
+          label="Мои"
+          disabled={!isAuth}
+        />
       </TabList>
       <TabPanel value="1">
         <Grid container spacing={4}>
@@ -144,7 +164,49 @@ export const Home = () => {
         </Grid>
       </TabPanel>
       <TabPanel value="3">
-        Мои посты
+        <Grid container spacing={4}>
+          <Grid xs={8} item>
+            {(isPostsLoading ? [...Array(5)] : posts.items.filter(post => userData?._id === post.author._id)).map((object, index) =>
+              isPostsLoading ? (
+                <Post key={index} isLoading={true} />
+              ) : (
+                <Post
+                  id={object._id}
+                  title={object.title}
+                  imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}
+                  user={object.author}
+                  createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
+                  viewsCount={object.viewsCount}
+                  commentsCount={3}
+                  tags={object.tags}
+                  isEditable={userData?._id === object.author._id}
+                />
+              ),
+            )}
+          </Grid>
+          <Grid xs={4} item>
+            <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+            <CommentsBlock
+              items={[
+                {
+                  user: {
+                    fullName: 'Вася Пупкин',
+                    avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
+                  },
+                  text: 'Это тестовый комментарий',
+                },
+                {
+                  user: {
+                    fullName: 'Иван Иванов',
+                    avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
+                  },
+                  text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
+                },
+              ]}
+              isLoading={false}
+            />
+          </Grid>
+        </Grid>
       </TabPanel>
     </TabContext>
   );
