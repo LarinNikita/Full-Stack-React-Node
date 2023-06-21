@@ -49,6 +49,9 @@ app.get('/auth/me', checkAuth, UserControler.getMe);
 // ===== Все статьи =====
 app.get('/posts', PostControler.getAll);
 
+// ===== Популярные статьи =====
+app.get('/posts/popular', PostControler.getPopular);
+
 // ===== Одна статья =====
 app.get('/posts/:id', PostControler.getOne);
 
