@@ -25,9 +25,12 @@ const PostSchema = new mongoose.Schema(
             required: true,
         },
         imageUrl: String,
+        comments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment',
+        }],
     },
     {
-        // автоматическая привязка даты создания и обновления сущности
         timestamps: true,
     },
 );

@@ -4,8 +4,8 @@ import multer from 'multer';
 import cors from 'cors';
 import fs from 'fs';
 
-import { loginValidation, registerValidation, postCreateValidation } from './validations/index.js';
-import { UserControler, PostControler } from './controllers/index.js';
+import { loginValidation, registerValidation, postCreateValidation, commentCreateValidation } from './validations/index.js';
+import { UserControler, PostControler, CommentControler } from './controllers/index.js';
 import { checkAuth, handlValidationErrors } from './utils/index.js';
 
 mongoose
@@ -19,7 +19,7 @@ const app = express();
 const storage = multer.diskStorage({
     //путь файла
     destination: (_, __, callback) => {
-        if(!fs.existsSync('uploads')) {
+        if (!fs.existsSync('uploads')) {
             fs.mkdirSync('uploads');
         }
         callback(null, 'uploads');
@@ -59,6 +59,10 @@ app.get('/tags', PostControler.getLastTags);
 // ===== Одна статья =====
 app.get('/posts/:id', PostControler.getOne);
 
+// ===== Получение комментариев =====
+// app.get('/posts/:id/comments', CommentControler.getPostComments);
+app.get('/comments/:id', CommentControler.getPostComments);
+
 //#endregion
 
 //#region роуты доступные только авторизованным
@@ -77,6 +81,15 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
         url: `/uploads/${req.file.originalname}`,
     });
 });
+
+// ===== Создание комментария =====
+app.post(
+    '/comments/:id',
+    checkAuth,
+    commentCreateValidation,
+    handlValidationErrors,
+    CommentControler.create
+);
 
 //#endregion
 
