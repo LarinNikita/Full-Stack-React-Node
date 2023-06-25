@@ -27,10 +27,12 @@ export const create = async (req, res) => {
 export const getAll = async (req, res) => {
     try {
 
-        // const posts = await PostModel.find().populate('author', '-passwordHash').exec();
+        const sortParam = req.query.sortBy === 'popular' ? '-viewsCount' : '-createdAt';
+        const findParam = req.query.sortBy === 'popular' ? {viewsCount: { $gte: 100 }} : null;
+
         const posts = await PostModel
-            .find()
-            .sort({ createdAt: -1 })
+            .find(findParam)
+            .sort(sortParam)
             .populate({ path: "author", select: ["fullName", "avatarUrl"] })
             .exec();
 
