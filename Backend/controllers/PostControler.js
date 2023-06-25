@@ -81,7 +81,16 @@ export const getOne = async (req, res) => {
                 returnDocument: 'after',
             }
             // ).populate('author', '-passwordHash');
-        ).populate({ path: "author", select: ["fullName", "avatarUrl"] });
+        ).populate({ 
+            path: "author", 
+            select: ["fullName", "avatarUrl"] 
+        }).populate({
+            path: 'comments',
+            populate: {
+                path: 'author',
+                select: 'fullName avatarUrl'
+            }
+        });
 
         if (!doc) {
             return res.status(404).json({

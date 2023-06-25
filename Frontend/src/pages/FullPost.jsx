@@ -1,39 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import React from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 
-import axios from '../axios';
-
 import { Post } from "../components/Post";
-import { Index } from "../components/AddComment";
+import { AddComment } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
+
+import { fetchPostsById, fetchPostComments } from "../redux/slices/posts";
 
 export const FullPost = () => {
 
-  const [data, setData] = React.useState();
-  const [isLoading, setLoading] = React.useState(true);
-  const { id } = useParams();
+  const dispatch = useDispatch();
 
+  const { data, status, comments } = useSelector((state) => state.posts.currentPost);
   const userData = useSelector((state) => state.auth.data);
 
+  const isLoading = status === 'loading';
+  const isCommentsLoading = comments.status === 'loading';
+
+  const { id } = useParams();
+
+
   React.useEffect(() => {
+    dispatch(fetchPostsById(id));
+    dispatch(fetchPostComments(id));
+  }, [dispatch, id]);
 
-    axios
-      .get(`/posts/${id}`)
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.warn(err);
-        alert('Ошибка при получении статьи');
-      })
-
-  }, []);
-
-  if (isLoading) {
-    return <Post isLoading={isLoading} isFullPost />;
+  if (isLoading || isCommentsLoading) {
+    return <Post isLoading={true} isFullPost />;
   }
 
   return (
@@ -41,39 +36,22 @@ export const FullPost = () => {
       <Post
         id={data._id}
         title={data.title}
-        // imageUrl={data.imageUrl}
         imageUrl={data.imageUrl ? `http://localhost:4444${data.imageUrl}` : ''}
         user={data.author}
         createdAt={new Date(data.createdAt).toLocaleDateString('en-GB')}
         viewsCount={data.viewsCount}
-        commentsCount={3}
+        commentsCount={comments.items.length}
         tags={data.tags}
         isFullPost
         isEditable={userData?._id === data.author._id}
       >
-        {/* <p>{data.text}</p> */}
         <ReactMarkdown children={data.text} />
       </Post>
       <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: "Вася Пупкин",
-              avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
-            },
-            text: "Это тестовый комментарий 555555",
-          },
-          {
-            user: {
-              fullName: "Иван Иванов",
-              avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
-            },
-            text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-          },
-        ]}
-        isLoading={false}
+        items={comments.items}
+        isLoading={isCommentsLoading}
       >
-        <Index />
+        {userData ? <AddComment /> : null}
       </CommentsBlock>
     </>
   );
