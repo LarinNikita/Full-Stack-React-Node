@@ -8,7 +8,9 @@ import Grid from '@mui/material/Grid';
 import { Post } from '../../components';
 import { TagsBlock } from '../../components/TagsBlock';
 import { CommentsBlock } from '../../components/CommentsBlock';
-import { fetchPosts, fetchTags } from '../../redux/slices/posts';
+import { fetchLastComments, fetchPosts, fetchTags } from '../../redux/slices/posts';
+
+import styles from './Tag.module.scss';
 
 export const TagPage = () => {
 
@@ -17,14 +19,16 @@ export const TagPage = () => {
     const dispath = useDispatch();
     const userData = useSelector((state) => state.auth.data);
 
-    const { posts, tags } = useSelector((state) => state.posts);
+    const { posts, tags, comments } = useSelector((state) => state.posts);
 
     const isPostsLoading = posts.status === 'loading';
     const isTagsLoading = tags.status === 'loading';
+    const isTCommentsLoading = comments.status === 'loading';
 
     React.useEffect(() => {
         dispath(fetchPosts());
         dispath(fetchTags());
+        dispath(fetchLastComments());
     }, []);
 
     // Фильтруем посты по имени тега из URL
@@ -32,7 +36,7 @@ export const TagPage = () => {
 
     return (
         <>
-            <Typography variant="h4" fontWeight="bold" color="#626262" marginBottom="20px">
+            <Typography variant="h4" className={styles.title}>
                 #{name}
             </Typography>
             <Grid container spacing={4}>
@@ -58,23 +62,8 @@ export const TagPage = () => {
                 <Grid xs={4} item>
                     <TagsBlock items={tags.items} isLoading={isTagsLoading} />
                     <CommentsBlock
-                        items={[
-                            {
-                                author: {
-                                    fullName: 'Вася Пупкин',
-                                    avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                                },
-                                comment: 'Это тестовый комментарий',
-                            },
-                            {
-                                author: {
-                                    fullName: 'Иван Иванов',
-                                    avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                                },
-                                comment: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-                            },
-                        ]}
-                        isLoading={false}
+                        items={comments.items}
+                        isLoading={isTCommentsLoading}
                     />
                 </Grid>
             </Grid>
