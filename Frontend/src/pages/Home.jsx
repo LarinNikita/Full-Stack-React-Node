@@ -17,7 +17,7 @@ import Grid from '@mui/material/Grid';
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchPosts, fetchPopularPosts, fetchTags } from '../redux/slices/posts';
+import { fetchPosts, fetchPopularPosts, fetchTags, fetchPostComments, fetchLastComments } from '../redux/slices/posts';
 
 import { selectIsAuth } from '../redux/slices/auth';
 
@@ -28,16 +28,18 @@ export const Home = () => {
   const dispath = useDispatch();
   const userData = useSelector((state) => state.auth.data);
 
-  const { posts, tags, popularPosts } = useSelector((state) => state.posts);
+  const { posts, tags, popularPosts, comments } = useSelector((state) => state.posts);
 
   const isPostsLoading = posts.status === 'loading';
   const isPopularPostsLoading = popularPosts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
+  const isCommentsLoading = comments.status === 'loading';
 
   React.useEffect(() => {
     dispath(fetchPosts());
     dispath(fetchTags());
     dispath(fetchPopularPosts());
+    dispath(fetchLastComments());
   }, []);
 
   const [value, setValue] = React.useState(localStorage.getItem('tabValue') || '1');
@@ -87,7 +89,7 @@ export const Home = () => {
                   user={object.author}
                   createdAt={new Date(object.createdAt).toLocaleDateString('en-GB')}
                   viewsCount={object.viewsCount}
-                  commentsCount={3}
+                  commentsCount={object.comments.length}
                   tags={object.tags}
                   isEditable={userData?._id === object.author._id}
                 />
@@ -97,23 +99,8 @@ export const Home = () => {
           <Grid xs={4} item>
             <TagsBlock items={tags.items} isLoading={isTagsLoading} />
             <CommentsBlock
-              items={[
-                {
-                  author: {
-                    fullName: 'Вася Пупкин',
-                    avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                  },
-                  comment: 'Это тестовый комментарий',
-                },
-                {
-                  author: {
-                    fullName: 'Иван Иванов',
-                    avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                  },
-                  comment: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-                },
-              ]}
-              isLoading={false}
+              items={comments.items}
+              isLoading={isCommentsLoading}
             />
           </Grid>
         </Grid>

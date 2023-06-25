@@ -1,5 +1,4 @@
 import PostModel from '../models/Post.js';
-import CommentModel from '../models/Comment.js';
 
 export const create = async (req, res) => {
     try {
@@ -181,28 +180,6 @@ export const getLastTags = async (req, res) => {
         console.log(err);
         res.status(500).json({
             message: 'Не удалось получить тэги',
-        });
-    }
-}
-
-export const getComments = async (req, res) => {
-    try {
-        const post = await PostModel.findById(req.params.id);
-        const list = await Promise.all(
-            post.comments.map((comment) => {
-                return CommentModel.findById(comment).populate({
-                    path: 'author',
-                    select: 'fullName avatarUrl'
-                });
-            })
-        );
-
-        res.json(list);
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({
-            message: 'Не удалось получить комментарии',
         });
     }
 }

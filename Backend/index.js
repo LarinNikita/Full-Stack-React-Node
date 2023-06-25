@@ -60,7 +60,7 @@ app.get('/tags', PostControler.getLastTags);
 app.get('/posts/:id', PostControler.getOne);
 
 // ===== Получение комментариев =====
-// app.get('/posts/:id/comments', CommentControler.getPostComments);
+app.get('/comments/last', CommentControler.getLastComments);
 app.get('/comments/:id', CommentControler.getPostComments);
 
 //#endregion
@@ -90,6 +90,9 @@ app.post(
     handlValidationErrors,
     CommentControler.create
 );
+
+// ===== Удалить комментарий =====
+app.delete('/comments/:id', checkAuth, CommentControler.remove);
 
 //#endregion
 

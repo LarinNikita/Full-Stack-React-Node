@@ -26,6 +26,16 @@ export const createComment = createAsyncThunk('comments/createComment', async ({
     return data;
 });
 
+export const fetchRemoveComments = createAsyncThunk('posts/fetchRemoveComments', async (id) => {
+    const { data } = await axios.delete(`/comments/${id}`);
+    return data;
+});
+
+export const fetchLastComments = createAsyncThunk('comments/fetchLastComments', async () => {
+    const { data } = await axios.get('/comments/last');
+    return data;
+});
+
 export const fetchTags = createAsyncThunk('posts/fetchingTags', async () => {
     const { data } = await axios.get('/tags');
     return data;
@@ -167,6 +177,27 @@ const postsSlice = createSlice({
         },
         [createComment.rejected]: (state) => {
             state.currentPost.comment.status = 'error';
+        },
+        //#endregion
+
+        //#region Удаление комментария
+        [fetchRemoveComments.pending]: (state, action) => {
+            state.currentPost.comments.items = state.currentPost.comments.items.filter(object => object._id !== action.meta.arg);
+        },
+        //#endregion
+
+        //#region Получение последних комментариев
+        [fetchLastComments.pending]: (state) => {
+            state.comments.items = [];
+            state.comments.status = 'loading';
+        },
+        [fetchLastComments.fulfilled]: (state, action) => {
+            state.comments.items = action.payload;
+            state.comments.status = 'loaded';
+        },
+        [fetchLastComments.rejected]: (state) => {
+            state.comments.items = [];
+            state.comments.status = 'error';
         },
         //#endregion
     },
