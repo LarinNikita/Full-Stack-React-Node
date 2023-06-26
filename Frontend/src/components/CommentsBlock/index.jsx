@@ -50,8 +50,8 @@ export const CommentsBlock = ({ items, children, isLoading = true }) => {
                 <div className={styles.comment}>
                   <ListItemText
                     primary={[
-                      <strong>{obj.author.fullName} </strong>,
-                      <span className={styles.created}>{new Date(obj.createdAt).toLocaleDateString('en-GB')}</span>
+                      <strong key="author">{obj.author.fullName} </strong>,
+                      <span key="date" className={styles.created}>{new Date(obj.createdAt).toLocaleDateString('en-GB')}</span>
                     ]}
                     secondary={obj.comment}
                     className={styles.linebreak}
