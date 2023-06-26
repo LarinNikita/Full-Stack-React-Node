@@ -19,16 +19,14 @@ export const Registration = () => {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isValid }
-  } = useForm({
-    defaultValues: {
-      fullName: 'Аластар',
-      email: 'alastar@test.ru',
-      password: '666666',
-    },
-    mode: 'onChange',
-  });
+  } = useForm({ mode: 'onChange', });
+
+  const [imageUrl, setImageUrl] = React.useState('');
+
+  const handleChangeImageUrl = (e) => {
+    setImageUrl(e.target.value);
+  };
 
   const onSubmit = async (values) => {
 
@@ -54,9 +52,19 @@ export const Registration = () => {
         Создание аккаунта
       </Typography>
       <div className={styles.avatar}>
-        <Avatar sx={{ width: 100, height: 100 }} />
+        <Avatar sx={{ width: 100, height: 100 }} src={imageUrl}/>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
+        <TextField
+          className={styles.field}
+          error={Boolean(errors.avatarUrl?.message)}
+          helperText={errors.avatarUrl?.message}
+          {...register("avatarUrl")}
+          value={imageUrl}
+          onChange={handleChangeImageUrl}
+          label="Ссылка на аватарку"
+          fullWidth
+        />
         <TextField
           className={styles.field}
           label="Полное имя"

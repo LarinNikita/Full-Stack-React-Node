@@ -46,6 +46,7 @@ export const TagPage = () => {
                             <Post key={index} isLoading={true} />
                         ) : (
                             <Post
+                                key={index}
                                 id={object._id}
                                 title={object.title}
                                 imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}

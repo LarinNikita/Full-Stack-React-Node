@@ -123,8 +123,8 @@ export const AddPost = () => {
       <Button
         style={{ marginRight: '15px' }}
         onClick={() => inputFileRef.current.click()}
-        variant="outlined" s
-        ize="large"
+        variant="outlined" 
+        size="large"
       >
         Загрузить превью
       </Button>

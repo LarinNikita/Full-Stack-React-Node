@@ -4,10 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import PersonIcon from '@mui/icons-material/Person';
@@ -99,6 +95,7 @@ export const Home = () => {
               <Post key={index} isLoading={true} />
             ) : (
               <Post
+                key={index}
                 id={object._id}
                 title={object.title}
                 imageUrl={object.imageUrl ? `http://localhost:4444${object.imageUrl}` : ''}
