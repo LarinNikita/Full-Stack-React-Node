@@ -53,8 +53,8 @@ app.get('/posts', PostControler.getAll);
 app.get('/posts/popular', PostControler.getPopular);
 
 // ===== Получение тэгов =====
-app.get('/posts/tags', PostControler.getLastTags);
-app.get('/tags', PostControler.getLastTags);
+app.get('/posts/tags', PostControler.getTags);
+app.get('/tags', PostControler.getTags);
 
 // ===== Одна статья =====
 app.get('/posts/:id', PostControler.getOne);
