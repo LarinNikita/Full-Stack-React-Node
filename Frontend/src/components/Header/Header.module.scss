@@ -8,6 +8,7 @@
 .inner {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
@@ -24,6 +25,12 @@
   &:hover {
     background-color: #4361ee;
   }
+}
+
+.search {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 10px;
 }
 
 .buttons {

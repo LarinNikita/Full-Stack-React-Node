@@ -7,14 +7,18 @@ import Container from '@mui/material/Container';
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectIsAuth } from '../../redux/slices/auth';
 
+import { Search } from '../Search';
+
 export const Header = () => {
 
-  const dispatсh = useDispatch();
+  const dispatch = useDispatch();
+
   const isAuth = useSelector(selectIsAuth);
 
-  const onClickLogout = () => { 
+
+  const onClickLogout = () => {
     if (window.confirm('Вы действительно хотите выйти?')) {
-      dispatсh(logout());
+      dispatch(logout());
       window.localStorage.removeItem('token');
     }
   };
@@ -26,6 +30,11 @@ export const Header = () => {
           <Link className={styles.logo} to="/">
             <div>New Posts</div>
           </Link>
+
+          <div className={styles.search}>
+            <Search />
+          </div>
+
           <div className={styles.buttons}>
             {isAuth ? (
               <>
