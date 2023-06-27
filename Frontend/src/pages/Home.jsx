@@ -16,12 +16,14 @@ import { CommentsBlock } from '../components/CommentsBlock';
 import { fetchPosts, fetchTags, fetchLastComments } from '../redux/slices/posts';
 
 import { selectIsAuth } from '../redux/slices/auth';
+import { selectSearchValue } from '../redux/slices/search';
 
 export const Home = () => {
-
-  const isAuth = useSelector(selectIsAuth);
+  const searchValue = useSelector(selectSearchValue);
 
   const dispatch = useDispatch();
+
+  const isAuth = useSelector(selectIsAuth);
   const userData = useSelector((state) => state.auth.data);
 
   const defaultTab = 'new';
@@ -37,6 +39,13 @@ export const Home = () => {
     const filteredPosts = sortedBy === 'my'
       ? posts.items.filter(post => userData?._id === post.author._id)
       : posts.items;
+
+    if (searchValue) {
+      return filteredPosts.filter(post =>
+        post.title.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
     return filteredPosts;
   };
 
